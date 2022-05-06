@@ -6,7 +6,7 @@ default: &default
 
 development:
   <<: *default
-  database: open-flights_dev
+  database: travelocity_dev
 test:
   <<: *default
-  database: open-flights_test
+  database: travelocity_test
