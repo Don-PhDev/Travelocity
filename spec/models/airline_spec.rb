@@ -14,10 +14,6 @@ RSpec.describe Airline, type: :model do
   let(:airline) { create(:airline) }
   let!(:reviews) { create_list(:review, 2, user_id: user.id, airline_id: airline.id) }
 
-  describe "#slugify" do
-    it { expect(airline.slug).to eq("fake-airline") }
-  end
-
   describe "#calculate_average" do
     it { expect(airline.reviews.size).to eq 2 }
     it { expect(airline.reviews.sum(:score)).to eq 6 }
