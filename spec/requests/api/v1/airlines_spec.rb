@@ -1,15 +1,14 @@
 require "rails_helper"
 
 RSpec.describe Api::V1::AirlinesController do
-  let!(:user) { FactoryBot.create(:user) }
+  let!(:user) { build(:user) }
+  let(:name) { Faker::Company.name + [" Airways", " Airlines"].sample }
+  let(:image_url) { Faker::LoremFlickr.image(search_terms: ["airlines", "logo"], match_all: true) }
   let(:params) do
     {
       airline: {
-        name: my_airline.name,
-        image_url: Faker::LoremFlickr.image(
-          search_terms: ["airlines", "logo"],
-          match_all: true
-        )
+        name: name,
+        image_url: image_url
       }
     }
   end
@@ -24,38 +23,30 @@ RSpec.describe Api::V1::AirlinesController do
   end
 
   describe "POST /create" do
+    subject { post "/api/v1/airlines", params: params }
+
     context "with valid parameters" do
-      let!(:my_airline) { FactoryBot.create(:airline) }
-
-      subject { post "/api/v1/airlines", params: params }
-
-      it "returns the name" do
-        subject
-        expect(json["name"]).to eq(my_airline.name)
-      end
-
-      it "returns the slug" do
-        subject
-        expect(json["slug"]).to eq(my_airline.slug)
-      end
-
       it "returns a created status" do
         subject
         expect(response).to have_http_status(:created)
+        expect(response.status).to eq(201)
       end
     end
 
     context "with invalid parameters" do
-      before do
-        post "/api/v1/airlines",
-          params: {
-            airline: {
-              name: ""
-            }
+      let(:empty_params) do
+        {
+          airline: {
+            name: nil,
+            image_url: nil
           }
+        }
       end
 
+      subject { post "/api/v1/airlines", params: empty_params }
+
       it "returns a unprocessable entity status" do
+        subject
         expect(response).to have_http_status(:unprocessable_entity)
       end
     end
